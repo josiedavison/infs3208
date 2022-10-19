@@ -8,12 +8,8 @@ services:
         hostname: nodejsserver
         ports:
             - "8080:8080" 
-        depends_on: 
-            - redis
         networks:
             - example-net  
-        links:
-            - redis
     nginx:
         build:
           context: ./nginx
@@ -25,11 +21,14 @@ services:
             - nodejs-app
         networks:
             - example-net
-    redis:
-        image: 'redis:latest'
-        container_name: redis
-        networks:
-          - example-net            
+    mongo:
+        image: mongo
+        ports:
+            - 27017:27017
+        volumes:
+            - mongodb:/data/db
+volumes:
+    mongodb:
 
 networks:
   example-net:
