@@ -1,0 +1,21 @@
+{
+  "name": "spotifymindreaderexpress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "devStart": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "node-fetch": "^3.2.10"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
