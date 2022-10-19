@@ -199,6 +199,28 @@ app.post('/submit', (req, res) => {
     //set energy and mood
     energy = energyValue;
     mood = moodValue;
+  
+    userDataSchema.findOneAndUpdate({username: username }, 
+    {energy: energyValue}, null, function (err, docs) {
+    if (err){
+        console.log(err);
+    }
+    else{
+        console.log("saved energy");
+    }
+      
+    userDataSchema.findOneAndUpdate({username: username }, 
+    {mood: moodValue}, null, function (err, docs) {
+    if (err){
+        console.log(err);
+    }
+    else{
+        console.log("saved mood");
+    }
+      
+      
+      
+});
 
     res.status(200).send({status: "success"});
 
@@ -223,6 +245,14 @@ app.post('/page2/createPlaylist', (req, res) =>{
     //CHANGE THIS - store in mongo DB 
     //storegenre for later use 
     selectedGenre = genre;
+    userDataSchema.findOneAndUpdate({username: username }, 
+    {selectedGenre: genre}, null, function (err, docs) {
+    if (err){
+        console.log(err);
+    }
+    else{
+        console.log("saved genre" + docs);
+    }
 
     getRecommendations(artist, genre, username, res);
 
@@ -309,6 +339,15 @@ async function getRecommendations(artist, genre, username, resInherited){
     //CHANGE THIS, save to database 
     var playlistData = await resCreatePlaylist.json();
     playlistID = playlistData.id;
+  
+    userDataSchema.findOneAndUpdate({username: username }, 
+    {playlistID: playlistData.id}, null, function (err, docs) {
+    if (err){
+        console.log(err);
+    }
+    else{
+        console.log("saved playlist id " + docs);
+    }
 
     //add songs to playlist
     var playlistUrl = ADDSONGS + playlistID + ADDSONGS2;
