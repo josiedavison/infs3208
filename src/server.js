@@ -20,7 +20,7 @@ const ADDSONGS2 = "/tracks?uris=";
 //variables that need to go in the database later
 var access_token = null;
 var refresh_token = null;
-var username = null;
+//var username = null;
 
 var energy = null;
 var mood = null;
@@ -141,11 +141,14 @@ async function callAuthorizationApi(body, resInherited){
         body: body
 
     });
+  
+    var tempAccess_token = null;
 
     if (res.status == 200){
         var data = await res.json();
         if (data.access_token != undefined){
             access_token = data.access_token;
+            tempAccess_token = data.access_token;
         }
         if( data.refresh_token != undefined){
             refresh_token = data.refresh_token;
@@ -162,22 +165,22 @@ async function callAuthorizationApi(body, resInherited){
         method: "GET",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + access_token
+            'Authorization' : 'Bearer ' + tempAccess_token
         }
 
     });
 
     var userdata = await user.json();
-    username = userdata.id;
+    //username = userdata.id;
   
     //store
-    const newUser = new userDataCollection({usernameData: userdata.id, access_tokenData: access_token});
+    const newUser = new userDataCollection({usernameData: userdata.id, access_tokenData: tempAccess_token});
     console.log("new user is " + newUser +" " +newUser.UsernameData +newUser.access_tokenData);
     
 
   
     //send username back to user, to be used as a session ID
-    resInherited.status(200).send({username: username});
+    resInherited.status(200).send({username: userdata.id});
   
 
 
@@ -346,12 +349,12 @@ async function getRecommendations(artist, genre, username, resInherited){
     playlistID = playlistData.id;
   
     userDataCollection.findOneAndUpdate({username: username }, 
-    {playlistID: playlistData.id}, null, function (err, docs) {
+    {playlistIDData: playlistData.id}, null, function (err, docs) {
     if (err){
         console.log(err);
     }
     else{
-        console.log("saved playlist id " + docs);
+        console.log("saved playlist id " + docs.playlisIDData);
     }
     })
 
