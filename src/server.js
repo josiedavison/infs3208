@@ -41,7 +41,7 @@ const fetch = (...args) =>
 //import redis
 const redis = require('redis');
 const redisClient = redis.createClient(6379,'redis');
-client.connect().then(() => {
+redisClient.connect().then(() => {
   if(!redisClient.get('customer_name',redis.print)) {
     //create a new record
     redisClient.set('customer_name','John Doe', redis.print);
