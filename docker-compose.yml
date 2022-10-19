@@ -24,4 +24,4 @@ services:
 
 networks:
   example-net:
-    external: true
+    driver: bridge
