@@ -70,6 +70,9 @@ const userDataSchema = new Schema({
   playlistID : String 
 });
 
+module.exports = mongoose.model('Users', userDataSchema);
+
+
 
 
 
