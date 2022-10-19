@@ -169,16 +169,9 @@ async function callAuthorizationApi(body, resInherited){
     username = userdata.id;
   
     //store
-    var newUser = new userDataSchema({username:username, access_token : access_token}); 
-    newUser.save(function(err, data) {
-        if(err) {
-            console.log(error);
-        }
-        else {
-            res.send("Data inserted");
-        }
-    });
-
+    var userCollection = mongoose.model(username, userDataSchema);
+    userCollection.access_token = access_token;
+    
 
   
     //send username back to user, to be used as a session ID
