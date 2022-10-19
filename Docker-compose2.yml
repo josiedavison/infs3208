@@ -8,6 +8,8 @@ services:
         hostname: nodejsserver
         ports:
             - "8080:8080" 
+        links:
+            - mongo
         networks:
             - example-net  
     nginx:
@@ -23,10 +25,12 @@ services:
             - example-net
     mongo:
         image: mongo
-        ports:
-            - 27017:27017
         volumes:
-            - mongodb:/data/db
+            - ./data:/data/db
+        ports:
+            - '2701:2701'
+        networks:
+            - example-net
 volumes:
     mongodb:
 
