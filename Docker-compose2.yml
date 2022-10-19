@@ -12,6 +12,8 @@ services:
             - redis
         networks:
             - example-net  
+        links:
+            - redis
     nginx:
         build:
           context: ./nginx
@@ -25,9 +27,7 @@ services:
             - example-net
     redis:
         image: 'redis:latest'
-        container_name: redis-database
-        ports:
-            - '6379:6379'
+        container_name: redis
         networks:
           - example-net            
 
