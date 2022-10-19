@@ -1,7 +1,7 @@
 //set constant variables
 
-const client_id = "29830766511a4b7bbbd20eec3bda6104"; 
-const client_secret = "e88c64307d5f47c6a55c9d8fb41dcc1f";
+const client_id = "33aa689ba0aa4861b84898901540b3a5"; 
+const client_secret = "cda4a775b4184824854c620af8ccb933";
 
 const AUTHORIZE = "https://accounts.spotify.com/authorize";
 const TOKEN = "https://accounts.spotify.com/api/token";
