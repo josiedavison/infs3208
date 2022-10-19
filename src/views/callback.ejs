@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora">
+
+<link rel="stylesheet" href="page1.css">
+
+
+
+
+<title>Spotify Mind Reader</title>
+</head>
+
+
+<body onload="onPageLoad()">
+
+<h1>How Are You Feeling Today?</h1>
+
+<p> Mellow Energetic</p>
+
+
+<div class="slidecontainer">
+    <input type="range" min="1" max="100" value="50" class="slider" id="energy">
+</div>
+
+<p> Gloomy  Cheerful</p>
+
+<div class="slidecontainer">
+    <input type="range" min="1" max="100" value="50" class="slider" id="mood">
+  </div>
+
+<div class = "sliderWrapper">
+ <div> Include instrumentals?</div>
+
+  <input type="checkbox" id="switch"
+  class="checkbox" />
+<label for="switch" class="toggle">
+</label>
+</div>
+<br>
+<button type="button" onclick="next()">Next</button>
+
+<script>
+
+var page1 = "callback";
+var page2 = "page2";
+
+
+
+var redirect_uri = window.location.origin + "/" + page1 ;
+
+
+async function next(){
+
+  baseUrl = window.location.protocol + "//" + window.location.host;
+
+  var energyslider = document.getElementById('energy');
+  var moodslider = document.getElementById('mood');
+
+  const res = await fetch(baseUrl +"/submit", 
+    {
+      method : "POST",
+      headers: {
+        "Content-Type":'application/json'
+      },
+    body: JSON.stringify({
+        energyValue: energyslider.value/100,
+        moodValue: moodslider.value/100,
+        username: localStorage.getItem("username")
+    })
+  })
+  console.log(res);
+
+
+  //save variables in db 
+
+  window.location.href = '../' + page2;
+
+}
+
+
+    
+function onPageLoad(){
+
+if( window.location.search.length > 0){
+    handleRedirect();
+}
+
+}
+
+async function handleRedirect(){
+
+  //get the code from the url 
+  let code = getCode();
+  console.log("code is " + code);
+
+  //send a request to the server, to get and store the access token 
+  baseUrl = window.location.protocol + "//" + window.location.host;
+  console.log(baseUrl+"/getToken");
+  const res = await fetch(baseUrl +"/getToken", 
+    {
+      method : "POST",
+      headers: {
+        "Content-Type":'application/json'
+      },
+    body: JSON.stringify({
+        code: code,
+        redirect_uri: redirect_uri
+    })
+  })
+  console.log(res);
+  const data = await res.json();
+  console.log(data.username);
+  localStorage.setItem("username", data.username);
+
+
+  //remove parameters from the url 
+  window.history.pushState("", "", redirect_uri); // remove param from url
+
+  //reload the page
+  onPageLoad();
+
+
+
+}
+
+function getCode(){
+let code = null;
+const queryString = window.location.search;
+if( queryString.length > 0){
+    const urlParams = new URLSearchParams(queryString);
+    code = urlParams.get('code');
+}
+
+return code;
+
+}
+
+</script>
+
+</body>
+</html>

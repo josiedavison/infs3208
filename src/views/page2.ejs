@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora">
+
+<link rel="stylesheet" href="page2.css">
+
+
+<title>Spotify Mind Reader</title>
+</head>
+<body onload="onLoad()">
+
+<h1>Choose Some Artists.</h1>
+
+<input type="checkbox" name='artist0' id="artist0"/>
+<label for="artist0" id="image0">
+<img id="img0">
+</label> 
+
+<input type="checkbox" name='artist1' id="artist1"/>
+<label for="artist1" id ="image1">
+<img  id="img1">
+</label> 
+
+<input type="checkbox" name='artist2' id="artist2"/>
+<label for="artist2" id="image2">
+<img id="img2">
+</label> 
+
+<input type="checkbox" name='artist3' id="artist3"/>
+<label for="artist3" id= "image3">
+<img  id="img3">
+</label> 
+
+<input type="checkbox" name='artist4' id="artist4"/>
+<label for="artist4" id="image4">
+<img id="img4">
+
+
+</label> 
+
+
+
+
+
+<h1>Choose A Genre.</h1>
+
+<input type="radio" name= "genres" id="my_awesome_radio_1" value="pop" />
+<label for="my_awesome_radio_1">pop</label>
+<input type="radio" name="genres" id="my_awesome_radio_2" value="alternative" />
+<label for="my_awesome_radio_2">alternative</label>
+<input type="radio" name="genres" id="my_awesome_radio_3" value="folk" />
+<label for="my_awesome_radio_3">folk</label>
+<input type="radio" name="genres" id="my_awesome_radio_4" value="rock" />
+<label for="my_awesome_radio_4">rock</label>
+<input type="radio" name= "genres" id="my_awesome_radio_5" value="indie-pop" />
+<label for="my_awesome_radio_5">indie-pop</label>
+<input type="radio" name="genres" id="my_awesome_radio_6" value="grunge" />
+<label for="my_awesome_radio_6">grunge</label>
+<input type="radio" name="genres" id="my_awesome_radio_7" value="hip-hop" />
+<label for="my_awesome_radio_7">hip-hop</label>
+<br>
+<br>
+<input type="radio" name="genres" id="my_awesome_radio_8" value="goth" />
+<label for="my_awesome_radio_8">goth</label>
+<input type="radio" name= "genres" id="my_awesome_radio_9" value="ambient" />
+<label for="my_awesome_radio_9">ambient</label>
+<input type="radio" name="genres" id="my_awesome_radio_10" value="industrial" />
+<label for="my_awesome_radio_10">industrial</label>
+<input type="radio" name="genres" id="my_awesome_radio_11" value="emo" />
+<label for="my_awesome_radio_11">emo</label>
+<input type="radio" name="genres" id="my_awesome_radio_12" value="metal" />
+<label for="my_awesome_radio_12">metal</label>
+<input type="radio" name= "genres" id="my_awesome_radio_13" value="house" />
+<label for="my_awesome_radio_13">house</label>
+<input type="radio" name="genres" id="my_awesome_radio_14" value="punk" />
+<label for="my_awesome_radio_14">punk</label>
+<input type="radio" name="genres" id="my_awesome_radio_15" value="synth-pop" />
+<label for="my_awesome_radio_15">synth-pop</label>
+
+
+
+<br>
+<br>
+<br>
+
+<button type="button" onclick = "submit()">Submit</button>
+
+<script>
+
+var baseUrl = window.location.href;
+
+var page3 = "page3";
+
+async function onLoad(){
+
+    //make a request for artist data
+
+    const res = await fetch(baseUrl +"/getArtists/" + localStorage.getItem("username") , 
+    {
+      method : "GET",
+      headers: {
+        "Content-Type":'application/json'
+      }
+    })
+    console.log(res);
+
+    var images = await res.json();
+
+    var imageArray = images.images.split(',');
+    console.log(imageArray);
+
+    for(i = 0; i < 5; i++){
+        document.getElementById("img" + i.toString()).src=imageArray[i];
+
+
+    }
+
+}
+
+
+async function submit(){
+    console.log('submit');
+    if(!checkForButton()){
+        alert("Error: Please select a genre");
+        return;
+    }
+
+    //save the value of genre
+    var genres = document.getElementsByName('genres');
+    var selectedGenre = "";
+
+
+    for (var i = 0, length = genres.length; i < length; i++) {
+        if (genres[i].checked) {
+        selectedGenre = genres[i].value;
+
+        // only one radio can be logically checked, don't check the rest
+        break;
+        }   
+    }
+
+
+    //get the selected artists
+
+    selectedArtist = 0;
+
+    for(i = 0; i < 5; i++){
+        var artist = document.getElementById("artist"+i.toString());
+        if(artist.checked){
+            selectedArtist = i;
+        }
+
+    }
+
+
+    //get slected artists top track 
+    //generate playlist()
+    //form recommendation string
+    //get recommendations
+    //createplaylist()
+    //create mood playlist
+    //add recommendations to playlist
+
+    const res = await fetch(baseUrl +"/createPlaylist", 
+    {
+      method : "POST",
+      headers: {
+        "Content-Type":'application/json'
+      },
+    body: JSON.stringify({
+        username : localStorage.getItem('username'),
+        artist : selectedArtist,
+        genre : selectedGenre
+    })
+  })
+  console.log(res);
+  const data = await res.json();
+
+  localStorage.setItem("playlistID", data.playlistID);
+
+  window.location.href = '../' + page3;
+
+
+}
+
+function checkForButton() {
+    var radios = document.getElementsByName("genres");
+     for (var i = 0, len = radios.length; i < len; i++) {
+          if (radios[i].checked) {
+              return true;
+          }
+     }
+     
+
+     return false;
+}
+
+
+
+</script>
+
+</body>
+</html>
