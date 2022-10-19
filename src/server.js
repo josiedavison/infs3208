@@ -217,10 +217,11 @@ app.post('/submit', (req, res) => {
     else{
         console.log("saved mood");
     }
+    })
       
       
       
-});
+    });
 
     res.status(200).send({status: "success"});
 
@@ -253,6 +254,8 @@ app.post('/page2/createPlaylist', (req, res) =>{
     else{
         console.log("saved genre" + docs);
     }
+    })
+
 
     getRecommendations(artist, genre, username, res);
 
@@ -348,6 +351,8 @@ async function getRecommendations(artist, genre, username, resInherited){
     else{
         console.log("saved playlist id " + docs);
     }
+    })
+
 
     //add songs to playlist
     var playlistUrl = ADDSONGS + playlistID + ADDSONGS2;
