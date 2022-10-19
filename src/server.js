@@ -57,17 +57,17 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 const Schema = mongoose.Schema;
 
 const userDataSchema = new Schema({
-  username : String,
-  access_token : String,
-  refresh_token : String,
-  genre : String,
-  mood : String,
-  artists : [String],
-  artistsUris : [String],
-  selectedArtist : String, 
-  selectedGenre : String,
-  reccommendations : [String], 
-  playlistID : String 
+  usernameData : String,
+  access_tokenData : String,
+  refresh_tokenData : String,
+  genreData : String,
+  moodData : String,
+  artistsData : [String],
+  artistsUrisData : [String],
+  selectedArtistData : String, 
+  selectedGenreData : String,
+  reccommendationsData : [String], 
+  playlistIDData : String 
 });
 
 const userDataCollection = mongoose.model('userDataCollection', userDataSchema);
@@ -171,7 +171,8 @@ async function callAuthorizationApi(body, resInherited){
     username = userdata.id;
   
     //store
-    const newUser = new userDataCollection({username: userdata.id, access_token: access_token});
+    const newUser = new userDataCollection({usernameData: userdata.id, access_tokenData: access_token});
+    console.log("new user is " + newUser +" " +newUser.UsernameData +newUser.access_tokenData);
     
 
   
@@ -201,22 +202,22 @@ app.post('/submit', (req, res) => {
     energy = energyValue;
     mood = moodValue;
   
-    userDataCollection.findOneAndUpdate({username: username }, 
-    {energy: energyValue}, null, function (err, docs) {
+    userDataCollection.findOneAndUpdate({usernameData: username }, 
+    {energyData: energyValue}, null, function (err, docs) {
     if (err){
         console.log(err);
     }
     else{
-        console.log("saved energy");
+        console.log("saved energy" + docs.energyData);
     }
       
-    userDataCollection.findOneAndUpdate({username: username }, 
-    {mood: moodValue}, null, function (err, docs) {
+    userDataCollection.findOneAndUpdate({usernameData: username }, 
+    {moodData: moodValue}, null, function (err, docs) {
     if (err){
         console.log(err);
     }
     else{
-        console.log("saved mood");
+        console.log("saved mood" + docs.MoodData);
     }
     })
       
@@ -247,13 +248,13 @@ app.post('/page2/createPlaylist', (req, res) =>{
     //CHANGE THIS - store in mongo DB 
     //storegenre for later use 
     selectedGenre = genre;
-    userDataCollection.findOneAndUpdate({username: username }, 
-    {selectedGenre: genre}, null, function (err, docs) {
+    userDataCollection.findOneAndUpdate({usernameData: username }, 
+    {selectedGenreData: genre}, null, function (err, docs) {
     if (err){
         console.log(err);
     }
     else{
-        console.log("saved genre" + docs);
+        console.log("saved genre" + docs.selectedGenreData);
     }
     })
 
