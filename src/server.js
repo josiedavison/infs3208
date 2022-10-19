@@ -44,7 +44,7 @@ const mongoose = require('mongoose');
 
 mongoose
   .connect(
-    'mongodb://mongo:27017/docker-node-mongo',
+    'mongodb://mongo:27017/mydb',
     { useNewUrlParser: true }
   )
   .then(() => console.log('MongoDB Connected'))
