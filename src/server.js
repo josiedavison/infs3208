@@ -54,6 +54,7 @@ redisClient.connect().then(() => {
 })
 redisClient.on('error', (err) => {
     console.log('Error occured while connecting or accessing redis server');
+    console.log(err);
 });
 
 
