@@ -199,6 +199,7 @@ app.post('/submit', (req, res) => {
     const {moodValue} = req.body;
     const {username} = req.body;
 
+    var tempEnergy = energyValue
     var tempUsername = username;
     console.log("the username is " + tempUsername);
 
@@ -207,8 +208,8 @@ app.post('/submit', (req, res) => {
     energy = energyValue;
     mood = moodValue;
   
-    userDataCollection.findOneAndUpdate({usernameData: tempUsername }, 
-    {energyData: energyValue}, null, function (err, docs) {
+    userDataCollection.findOneAndUpdate({usernameData: "cyberjosie"}, 
+    {energyData: tempEnergy}, null, function (err, docs) {
     if (err){
         console.log(err);
     }
