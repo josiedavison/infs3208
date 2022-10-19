@@ -70,8 +70,7 @@ const userDataSchema = new Schema({
   playlistID : String 
 });
 
-module.exports = mongoose.model('Users', userDataSchema);
-
+const userDataCollection = mongoose.model('userDataCollection', userDataSchema);
 
 
 
@@ -172,8 +171,7 @@ async function callAuthorizationApi(body, resInherited){
     username = userdata.id;
   
     //store
-    var userCollection = mongoose.model(username, userDataSchema);
-    userCollection.access_token = access_token;
+    const newUser = new userDataCollection({username: userdata.id, access_token: access_token});
     
 
   
@@ -203,7 +201,7 @@ app.post('/submit', (req, res) => {
     energy = energyValue;
     mood = moodValue;
   
-    userDataSchema.findOneAndUpdate({username: username }, 
+    userDataCollection.findOneAndUpdate({username: username }, 
     {energy: energyValue}, null, function (err, docs) {
     if (err){
         console.log(err);
@@ -212,7 +210,7 @@ app.post('/submit', (req, res) => {
         console.log("saved energy");
     }
       
-    userDataSchema.findOneAndUpdate({username: username }, 
+    userDataCollection.findOneAndUpdate({username: username }, 
     {mood: moodValue}, null, function (err, docs) {
     if (err){
         console.log(err);
@@ -249,7 +247,7 @@ app.post('/page2/createPlaylist', (req, res) =>{
     //CHANGE THIS - store in mongo DB 
     //storegenre for later use 
     selectedGenre = genre;
-    userDataSchema.findOneAndUpdate({username: username }, 
+    userDataCollection.findOneAndUpdate({username: username }, 
     {selectedGenre: genre}, null, function (err, docs) {
     if (err){
         console.log(err);
@@ -346,7 +344,7 @@ async function getRecommendations(artist, genre, username, resInherited){
     var playlistData = await resCreatePlaylist.json();
     playlistID = playlistData.id;
   
-    userDataSchema.findOneAndUpdate({username: username }, 
+    userDataCollection.findOneAndUpdate({username: username }, 
     {playlistID: playlistData.id}, null, function (err, docs) {
     if (err){
         console.log(err);
