@@ -42,6 +42,7 @@ const fetch = (...args) =>
 const mongoose = require('mongoose');
 
 
+//from https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
 mongoose
   .connect(
     'mongodb://mongo:27017/mydb',
@@ -49,6 +50,27 @@ mongoose
   )
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+const Schema = mongoose.Schema;
+
+const userDataSchema = new Schema({
+  username : String,
+  access_token : String,
+  refresh_token : String,
+  genre : String,
+  mood : String,
+  artists : [String],
+  artistsUris : [String],
+  selectedArtist : String, 
+  selectedGenre : String,
+  reccommendations : [String], 
+  playlistID : String 
+});
+
+
 
 
 const { json } = require('express');
@@ -145,9 +167,23 @@ async function callAuthorizationApi(body, resInherited){
 
     var userdata = await user.json();
     username = userdata.id;
+  
+    //store
+    var newUser = new userDataSchema({username:username, access_token = access_token}); 
+    newUser.save(function(err, data) {
+        if(err) {
+            console.log(error);
+        }
+        else {
+            res.send("Data inserted");
+        }
+    });
 
+
+  
     //send username back to user, to be used as a session ID
     resInherited.status(200).send({username: username});
+  
 
 
 }
