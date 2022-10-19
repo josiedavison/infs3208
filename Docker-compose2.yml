@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+    nodejs-app:
+        build:
+          context: ./src
+        container_name: nodejsserver
+        hostname: nodejsserver
+        ports:
+            - "8080:8080" 
+        depends_on: 
+            - redis
+        networks:
+            - example-net  
+    nginx:
+        build:
+          context: ./nginx
+        container_name: nginx
+        hostname: nginx
+        ports:
+            - "80:80" 
+        depends_on:
+            - nodejs-app
+        networks:
+            - example-net
+    redis:
+        image: 'redis:latest'
+        container_name: redis-database
+        ports:
+            - '6379:6379'
+        networks:
+          - example-net            
+
+networks:
+  example-net:
+    driver: bridge
