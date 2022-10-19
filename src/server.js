@@ -195,6 +195,7 @@ app.post('/submit', (req, res) => {
     const {username} = req.body;
 
 
+    //CHANGE THIS - sace to mongo model
     //set energy and mood
     energy = energyValue;
     mood = moodValue;
@@ -219,6 +220,7 @@ app.post('/page2/createPlaylist', (req, res) =>{
     const {genre} = req.body;
     const {username} = req.body;
 
+    //CHANGE THIS - store in mongo DB 
     //storegenre for later use 
     selectedGenre = genre;
 
@@ -232,10 +234,12 @@ app.post('/page2/createPlaylist', (req, res) =>{
 async function getRecommendations(artist, genre, username, resInherited){
 
 
+    //CHANGE THIS - get from the database
     var artistID = artistsUris[parseInt(artist)];
-
+    //CHANGE THIS - get from database, and save to database
     selectedArtist = artists[parseInt(artist)];
 
+  //CHANGE THIS, get access token from database
 
     //in order to get recommended tracks, we need to provide spotify with at least one track
     //get the top track from the user selected artist
@@ -255,8 +259,10 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     //get recommendations from spotify 
 
+    //CHANGE THIS, get data like energy from database
     var recomendationString =`https://api.spotify.com/v1/recommendations?limit=10&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}&target_energy=${energy}&target_valence=${mood}`;
 
+    //CHANGE THIS, get access token from database
     const resRecommendations = await fetch(recomendationString, {
         method: "GET",
         headers : {
@@ -268,6 +274,7 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     var recommendationsData = await resRecommendations.json();
 
+    //CHANGE THIS, save to database
     //save reccomendations 
     for(i = 0; i <10; i++){
         reccomendations.push(recommendationsData.tracks[i].uri);
@@ -282,6 +289,7 @@ async function getRecommendations(artist, genre, username, resInherited){
     body.public = true;
 
 
+    //CHANGE THIS, get username from database and access token
     const resCreatePlaylist = await fetch(PLAYLIST + username + PLAYLIST2, {
         method: "POST",
         headers : {
@@ -298,6 +306,7 @@ async function getRecommendations(artist, genre, username, resInherited){
     });
 
 
+    //CHANGE THIS, save to database 
     var playlistData = await resCreatePlaylist.json();
     playlistID = playlistData.id;
 
@@ -311,6 +320,7 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     }
 
+    //CHANGE THIS, get access token from database
     const resAddSongs = await fetch(playlistUrl, {
         method: "POST",
         headers : {
@@ -337,6 +347,7 @@ app.get('/page2/getArtists/:username', (req, res) => {
 
 async function getTopArtists(username, resInherited){
 
+    //CHANGE THIS, get access token from database
     //get 5 top artists from spotify
     const user = await fetch(ARTISTS, {
         method: "GET",
@@ -347,6 +358,7 @@ async function getTopArtists(username, resInherited){
 
     });
 
+    //CHANGE THIS, save data to database
     //save artists names and uris 
     var images = "";
     var artistdata = await user.json();
@@ -371,6 +383,9 @@ app.get('/page3', (req, res) => {
 
 //get information about user requests to present back to user
 app.get('/page3/getInfo/:username', (req, res) => {
+  
+    //get username from url 
+    //CHANGE THIS, get all data from database
     res.status(200).send({
         energy : energy,
         valence : mood,
