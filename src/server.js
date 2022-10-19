@@ -199,13 +199,15 @@ app.post('/submit', (req, res) => {
     const {moodValue} = req.body;
     const {username} = req.body;
 
+    var tempUsername = username;
+    console.log("the username is " + tempUsername);
 
     //CHANGE THIS - sace to mongo model
     //set energy and mood
     energy = energyValue;
     mood = moodValue;
   
-    userDataCollection.findOneAndUpdate({usernameData: username }, 
+    userDataCollection.findOneAndUpdate({usernameData: tempUsername }, 
     {energyData: energyValue}, null, function (err, docs) {
     if (err){
         console.log(err);
