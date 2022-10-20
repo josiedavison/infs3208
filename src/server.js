@@ -1,8 +1,8 @@
-//set constant variables
-
+//set client ids
 const client_id = "33aa689ba0aa4861b84898901540b3a5"; 
 const client_secret = "cda4a775b4184824854c620af8ccb933";
 
+//set API urls for spotify integration
 const AUTHORIZE = "https://accounts.spotify.com/authorize";
 const TOKEN = "https://accounts.spotify.com/api/token";
 const USERNAME = "https://api.spotify.com/v1/me\n";
@@ -15,68 +15,9 @@ const ADDSONGS = "https://api.spotify.com/v1/playlists/";
 const ADDSONGS2 = "/tracks?uris=";
 
 
-
-
-//variables that need to go in the database later
-//var access_token = null;
-//var refresh_token = null;
-//var username = null;
-
-//var energy = null;
-//var mood = null;
-
-//var artists = [];
-//var artistsUris = [];
-//var selectedArtist = null;
-//var selectedGenre = null;
-
-//var reccomendations = [];
-//var playlistID = null;
-
-
-//import requirements 
+//import required libraries
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
-
-//import database
-const mongoose = require('mongoose');
-
-
-//from https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
-mongoose
-  .connect(
-    'mongodb://mongo:27017/mydb',
-    { useNewUrlParser: true }
-  )
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-
-/*
-const Schema = mongoose.Schema;
-
-const userDataSchema = new Schema({
-  usernameData : String,
-  access_tokenData : String,
-  refresh_tokenData : String,
-  genreData : String,
-  moodData : String,
-  artistsData : [String],
-  artistsUrisData : [String],
-  selectedArtistData : String, 
-  reccommendationsData : [String], 
-  playlistIDData : String 
-});
-
-const userData = mongoose.model("userData", userDataSchema);
-*/
-
-userDataBase = new Map();
-
-
-
 
 const { json } = require('express');
 const express = require('express');
@@ -88,15 +29,34 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 
+const mongoose = require('mongoose');
+
+//here is where we connect to the database
+//from https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
+//unfortunately, due to time constraints I did not get to fully implement the database in the code.
+//instead, user data will be saved in a map on the server. This is not an ideal solution and should be improved upon in future.
+mongoose
+  .connect(
+    'mongodb://mongo:27017/mydb',
+    { useNewUrlParser: true }
+  )
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+userDataBase = new Map();
 
 
-//logic for loading the index page
+
+//loading the index page
 app.get('/', (req, res) => {
     res.render('index');
 })
 
 
-//logic for authenticating a user 
+//loads the spotify log-in page
 app.get('/login', (req, res) => {
 
     var redirect_uri = "CALLBACK"
@@ -113,7 +73,7 @@ app.get('/login', (req, res) => {
 })
 
 
-//logic for geting an authenticated token for a user
+//authenticates a user and gets a token
 app.post('/getToken', (req, res) => {
 
     const {code} = req.body;
@@ -128,11 +88,10 @@ app.post('/getToken', (req, res) => {
 
     callAuthorizationApi(body, res);
 
-
-
 })
 
 
+//performs the api call for spotify authentication
 async function callAuthorizationApi(body, resInherited){
 
     //get the authentication token via an api call to spotify
@@ -179,25 +138,19 @@ async function callAuthorizationApi(body, resInherited){
     userDataBase.set(userdata.id + "access_token", access_token);
   
   
-
-
-  
     //send username back to user, to be used as a session ID
     resInherited.status(200).send({username: username});
-  
-  
-
 
 }
 
 
-//load the callback paged
+//load the callback page
 app.get('/callback', (req, res) => {
     console.log('on the callback');
     res.render('callback');
 })
 
-//load user data into the database 
+//inserts user data to the database
 app.post('/submit', (req, res) => {
     const {energyValue} = req.body;
     const {moodValue} = req.body;
@@ -210,9 +163,6 @@ app.post('/submit', (req, res) => {
     userDataBase.set(username +"mood", moodValue)
 
     res.status(200).send({status: "success"});
-
-
-
 
 })
 
@@ -231,11 +181,8 @@ app.post('/page2/createPlaylist', (req, res) =>{
 
     //storegenre for later use 
     userDataBase.set(username +"selectedGenre", genre);
-    //selectedGenre = genre;
 
     getRecommendations(artist, genre, username, res);
-
-
     
 })
 
@@ -243,11 +190,9 @@ app.post('/page2/createPlaylist', (req, res) =>{
 async function getRecommendations(artist, genre, username, resInherited){
 
 
-    //var artistID = artistsUris[parseInt(artist)];
     var artistID = userDataBase.get(username+"artistsUris")[parseInt(artist)];
     console.log("selected artist id is " + artistID);
 
-    //selectedArtist = artists[parseInt(artist)];
   
     var selectedArtist = userDataBase.get(username+"artists")[parseInt(artist)];
     userDataBase.set(username+"selectedArtist", selectedArtist);
@@ -255,7 +200,7 @@ async function getRecommendations(artist, genre, username, resInherited){
 
 
     //in order to get recommended tracks, we need to provide spotify with at least one track
-    //get the top track from the user selected artist
+    //so we should get the top track from the user selected artist
     const resTrack = await fetch(TOPTRACKS + artistID + TOPTRACKS2, {
         method: "GET",
         headers : {
@@ -350,7 +295,7 @@ async function getRecommendations(artist, genre, username, resInherited){
 }
 
 
-//get the top 5 artists and their images via spotify API 
+//gets a users top 5 artists and their images via spotify API 
 app.get('/page2/getArtists/:username', (req, res) => {
   
     console.log("getting top artists fro " +req.params.username);
@@ -360,6 +305,7 @@ app.get('/page2/getArtists/:username', (req, res) => {
 
 })
 
+//performs the api call to spotify, in order to receive top artists
 async function getTopArtists(username, resInherited){
 
     //get 5 top artists from spotify
@@ -396,7 +342,7 @@ async function getTopArtists(username, resInherited){
 }
 
 
-//logic for page 3
+//loads results page
 app.get('/page3', (req, res) => {
     res.render('page3');
 })
@@ -412,24 +358,14 @@ app.get('/page3/getInfo/:username', (req, res) => {
         artist : userDataBase.get(username +"selectedArtist")
     });
   
-  //reset information
-  //access_token = null;
-  //refresh_token = null;
-  //username = null;
-
-  //energy = null;
-  //mood = null;
-
-  //artists = [];
-  //artistsUris = [];
-  //selectedArtist = null;
-  //selectedGenre = null;
-
-  //reccomendations = [];
-  //playlistID = null;
-
-
-    
+  //delete all saved information
+  userDataBase.delete(username + "energy");
+  userDataBase.delete(username + "mood");
+  userDataBase.delete(username + "selectedGenre");
+  userDataBase.delete(username + "selectedArtist");
+  userDataBase.delete(username + "recommendations");
+  userDataBase.delete(username + "artists");
+  userDataBase.delete(username + "artistsUris");
 
 })
 
