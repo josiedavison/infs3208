@@ -38,7 +38,6 @@ var playlistID = null;
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
-/*
 //import database
 const mongoose = require('mongoose');
 
@@ -58,19 +57,20 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 const Schema = mongoose.Schema;
 
 const userDataSchema = new Schema({
-  username : String,
-  access_token : String,
-  refresh_token : String,
-  genre : String,
-  mood : String,
-  artists : [String],
-  artistsUris : [String],
-  selectedArtist : String, 
-  selectedGenre : String,
-  reccommendations : [String], 
-  playlistID : String 
+  usernameData : String,
+  access_tokenData : String,
+  refresh_tokenData : String,
+  genreData : String,
+  moodData : String,
+  artistsData : [String],
+  artistsUrisData : [String],
+  selectedArtistData : String, 
+  reccommendationsData : [String], 
+  playlistIDData : String 
 });
-*/
+
+const userData = mongoose.model("userData", SomeModelSchema);
+
 
 
 
@@ -85,22 +85,6 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 
-
-var MongoClient = require('mongodb').MongoClient;
-
-let database;
-
-MongoClient.connect('mongodb://mongo:27017/mydb', function(err, db) {
-  if (err) throw err;
-  console.log("Database created!");
-  database = db;
-});
-
-
-database.createCollection("customers", function(err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-});
 
 
 //logic for loading the index page
@@ -187,6 +171,21 @@ async function callAuthorizationApi(body, resInherited){
     var userdata = await user.json();
     var username = userdata.id;
   
+
+    const user_instance = new userData({ usernameData: username, access_tokenData : access_token });
+    user_instance.save((err) => {
+    if (err) return handleError(err);
+    // saved!
+    });
+  
+    userData.findOne({usernameData: username }, function (err, docs) {
+    if (err){
+        console.log(err)
+    }
+    else{
+        console.log("Result : ", docs);
+    }
+    });
 
 
   
