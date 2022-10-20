@@ -9,7 +9,7 @@ services:
         ports:
             - "8080:8080" 
         links:
-            - mongo
+            - redis
         networks:
             - example-net  
     nginx:
@@ -23,16 +23,14 @@ services:
             - nodejs-app
         networks:
             - example-net
-    mongo:
-        image: mongo
-        volumes:
-            - ./data:/data/db
+    redis:
+        image: redis:alpine
+        container_name: redis
         ports:
-            - '2701:2701'
+            - '6379:6379'
         networks:
             - example-net
-volumes:
-    mongodb:
+
 
 networks:
   example-net:
