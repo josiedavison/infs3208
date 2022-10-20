@@ -172,13 +172,13 @@ async function callAuthorizationApi(body, resInherited){
     var username = userdata.id;
   
 
-    const user_instance = new userData({ usernameData: username, access_tokenData : access_token });
+    const user_instance = new userData({ usernameData: userdata.id, access_tokenData : access_token });
     user_instance.save((err) => {
     if (err) return handleError(err);
     // saved!
     });
   
-    userData.findOne({usernameData: username }, function (err, docs) {
+    userData.findOne({usernameData: userdata.id }, function (err, docs) {
     if (err){
         console.log(err)
     }
