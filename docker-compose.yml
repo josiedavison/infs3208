@@ -8,6 +8,8 @@ services:
         hostname: nodejsserver
         ports:
             - "8080:8080" 
+        depends_on: 
+            - redis
         links:
             - redis
         networks:
