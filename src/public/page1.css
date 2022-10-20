@@ -12,7 +12,7 @@ body {
     
   }
 
-  /* from w3 schools https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
+  /* slider styling adapted from -> W3 Schools Contributors (2022) How TO - Range Sliders [source code] https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
 
   .slidecontainer {
     width: 100%;
@@ -61,7 +61,7 @@ body {
     cursor: pointer; /* Cursor on hover */
   }
 
- /* from  https://www.geeksforgeeks.org/how-to-create-toggle-switch-by-using-html-and-css/ */
+ /* toggle switches adapted from -> Geeks For Geeks Team (18/05/2022) How to Create Toggle Switch by using HTML and CSS [source code] https://www.geeksforgeeks.org/how-to-create-toggle-switch-by-using-html-and-css/?*/
 .toggle {
   position : relative ;
   display : inline-block;
