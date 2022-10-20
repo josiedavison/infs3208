@@ -19,11 +19,11 @@ const ADDSONGS2 = "/tracks?uris=";
 
 //variables that need to go in the database later
 //var access_token = null;
-var refresh_token = null;
+//var refresh_token = null;
 //var username = null;
 
-var energy = null;
-var mood = null;
+//var energy = null;
+//var mood = null;
 
 var artists = [];
 var artistsUris = [];
@@ -206,8 +206,8 @@ app.post('/submit', (req, res) => {
     console.log("user name is " + username);
 
     //set energy and mood
-    energy = energyValue;
-    mood = moodValue;
+    userDataBase.set(username +"energy", energyValue)
+    userDataBase.set(username +"mood", moodValue)
 
     res.status(200).send({status: "success"});
 
@@ -264,8 +264,10 @@ async function getRecommendations(artist, genre, username, resInherited){
 
 
     //get recommendations from spotify 
+    var energyV = userDataBase.get(username +"energy");
+    var moodV = userDataBase.get(username +"mood");
 
-    var recomendationString =`https://api.spotify.com/v1/recommendations?limit=10&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}&target_energy=${energy}&target_valence=${mood}`;
+    var recomendationString =`https://api.spotify.com/v1/recommendations?limit=10&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}&target_energy=${energyV}&target_valence=${moodV}`;
 
     const resRecommendations = await fetch(recomendationString, {
         method: "GET",
@@ -384,19 +386,19 @@ app.get('/page3', (req, res) => {
 //get information about user requests to present back to user
 app.get('/page3/getInfo/:username', (req, res) => {
     res.status(200).send({
-        energy : energy,
-        valence : mood,
+        energy : userDataBase.get(username +"energy"),
+        valence : userDataBase.get(username +"mood"),
         genre : selectedGenre,
         artist : selectedArtist
     });
   
   //reset information
-  access_token = null;
-  refresh_token = null;
-  username = null;
+  //access_token = null;
+  //refresh_token = null;
+  //username = null;
 
-  energy = null;
-  mood = null;
+  //energy = null;
+  //mood = null;
 
   artists = [];
   artistsUris = [];
