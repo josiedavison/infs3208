@@ -26,3 +26,9 @@ ALTERNATIVELY, to use your own spotify account follow these steps instead
 - Docker compose 
 
 1. call "sudo docker-compose up -d" in the infs320 folder
+
+
+
+
+- Other References
+nginx/default.conf -> TheTips4You (18/02/2021) "NodeJs Nginx Reverse Proxy Docker Compose | Node js Nginx Tutorial | Thetips4you" [source code] https://www.youtube.com/watch?v=QMa0Q1Dg2KU&t=525s&ab_channel=Thetips4you
