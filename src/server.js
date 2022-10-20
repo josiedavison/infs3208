@@ -386,6 +386,7 @@ app.get('/page3', (req, res) => {
 //get information about user requests to present back to user
 app.get('/page3/getInfo/:username', (req, res) => {
     res.status(200).send({
+        var username = req.params.username;
         energy : userDataBase.get(username +"energy"),
         valence : userDataBase.get(username +"mood"),
         genre : selectedGenre,
