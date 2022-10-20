@@ -61,7 +61,7 @@ const redisClient = redis.createClient({
 
 const redisClient = redis.createClient({
     socket: {
-        host: 'redis',
+        host: '0.0.0.0',
         port: 6379
     }
 });
