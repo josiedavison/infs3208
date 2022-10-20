@@ -366,13 +366,13 @@ async function getTopArtists(username, resInherited){
 
     //save artists names and uris 
     var topartists = [];
-    var topartistsuris = []
+    var topartistsuris = [];
     var images = "";
     var artistdata = await user.json();
     for (let i = 0; i< 5; i++){
         images = images + artistdata.items[i].images[0].url + ",";
         topartists.push(artistdata.items[i].name);
-        topartistsUris.push(artistdata.items[i].id);
+        topartistsuris.push(artistdata.items[i].id);
     }
   
     console.log("top artists are" + topartists);
