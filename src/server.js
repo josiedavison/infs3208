@@ -185,7 +185,7 @@ async function callAuthorizationApi(body, resInherited){
     else{
         console.log("Result : ", docs);
     }
-    });
+    }});
   
 
 
