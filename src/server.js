@@ -376,8 +376,8 @@ async function getTopArtists(username, resInherited){
     }
   
     console.log("top artists are" + topartists);
-    userDataBase.set(username+"artists", artists);
-    userDataBase.set(username+"artists", artistsUris);
+    userDataBase.set(username+"artists", topartists);
+    userDataBase.set(username+"artistsUris", topartistsuris);
 
 
 
