@@ -70,14 +70,6 @@ const redisClient = redis.createClient({
 redisClient.on('error', (err) => {
     console.log('Error occured while connecting or accessing redis server');
 });
-if(!redisClient.get('customer_name',redis.print)) {
-    //create a new record
-    redisClient.set('customer_name','John Doe', redis.print);
-    console.log('Writing Property : customer_name');
-} else {
-    let val = redisClient.get('customer_name',redis.print);
-    console.log(`Reading property : customer_name - ${val}`);
-}
 
 
 
@@ -89,6 +81,16 @@ app.get('/', (req, res) => {
 
 //logic for authenticating a user 
 app.get('/login', (req, res) => {
+  
+    if(!redisClient.get('customer_name',redis.print)) {
+      //create a new record
+      redisClient.set('customer_name','John Doe', redis.print);
+      console.log('Writing Property : customer_name');
+    } else {
+      let val = redisClient.get('customer_name',redis.print);
+      console.log(`Reading property : customer_name - ${val}`);
+    }
+
 
     var redirect_uri = "CALLBACK"
 
