@@ -32,3 +32,6 @@ ALTERNATIVELY, to use your own spotify account follow these steps instead
 
 - Other References
 nginx/default.conf -> TheTips4You (18/02/2021) "NodeJs Nginx Reverse Proxy Docker Compose | Node js Nginx Tutorial | Thetips4you" [source code] https://www.youtube.com/watch?v=QMa0Q1Dg2KU&t=525s&ab_channel=Thetips4you
+
+
+Spotify API calls used in src/server.js were adapted from -> Maker At Play (1/02/2021) "How to Authenticate and use Spotify Web API" [source code] https://www.youtube.com/watch?v=1vR3m0HupGI&t=1104s&ab_channel=MakerAtPlayCoding
