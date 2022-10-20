@@ -51,10 +51,22 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 
 const redis = require('redis');
+
+/*
 const redisClient = redis.createClient({
     host: 'redis',
     port: 6379
 })
+*/
+
+const redisClient = redis.createClient({
+    socket: {
+        host: 'redis',
+        port: 6379
+    }
+});
+
+
 redisClient.on('error', (err) => {
     console.log('Error occured while connecting or accessing redis server');
 });
