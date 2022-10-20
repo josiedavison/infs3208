@@ -374,6 +374,22 @@ app.get('/page3/getInfo/:username', (req, res) => {
         genre : selectedGenre,
         artist : selectedArtist
     });
+  
+  //reset information
+  access_token = null;
+  refresh_token = null;
+  username = null;
+
+  energy = null;
+  mood = null;
+
+  artists = [];
+  artistsUris = [];
+  selectedArtist = null;
+  selectedGenre = null;
+
+  reccomendations = [];
+  playlistID = null;
 
 
     
