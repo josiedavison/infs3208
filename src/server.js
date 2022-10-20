@@ -178,7 +178,7 @@ async function callAuthorizationApi(body, resInherited){
     // saved!
     });
   
-    userData.findOne({usernameData: userdata.id }, function (err, docs) {
+    userData.findOne({usernameData: {$eq:userdata.id}, function (err, docs) {
     if (err){
         console.log(err)
     }
@@ -186,6 +186,7 @@ async function callAuthorizationApi(body, resInherited){
         console.log("Result : ", docs);
     }
     });
+  
 
 
   
