@@ -366,7 +366,7 @@ async function getTopArtists(username, resInherited){
 
     //save artists names and uris 
     var topartists = [];
-    vr topartistsuris = []
+    var topartistsuris = []
     var images = "";
     var artistdata = await user.json();
     for (let i = 0; i< 5; i++){
@@ -395,8 +395,9 @@ app.get('/page3', (req, res) => {
 
 //get information about user requests to present back to user
 app.get('/page3/getInfo/:username', (req, res) => {
+    var username = req.params.username;
+
     res.status(200).send({
-        var username = req.params.username;
         energy : userDataBase.get(username +"energy"),
         valence : userDataBase.get(username +"mood"),
         genre : selectedGenre,
