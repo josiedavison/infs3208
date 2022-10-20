@@ -18,7 +18,7 @@ const ADDSONGS2 = "/tracks?uris=";
 
 
 //variables that need to go in the database later
-var access_token = null;
+//var access_token = null;
 var refresh_token = null;
 //var username = null;
 
@@ -54,6 +54,7 @@ mongoose
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
+/*
 const Schema = mongoose.Schema;
 
 const userDataSchema = new Schema({
@@ -70,7 +71,9 @@ const userDataSchema = new Schema({
 });
 
 const userData = mongoose.model("userData", userDataSchema);
+*/
 
+userDataBase = new Map();
 
 
 
@@ -143,6 +146,8 @@ async function callAuthorizationApi(body, resInherited){
 
     });
 
+    var access_token = null;
+    var refresh_token = null;
     if (res.status == 200){
         var data = await res.json();
         if (data.access_token != undefined){
@@ -171,27 +176,15 @@ async function callAuthorizationApi(body, resInherited){
     var userdata = await user.json();
     var username = userdata.id;
   
-
-    const user_instance = new userData({ usernameData: userdata.id, access_tokenData : access_token });
-    user_instance.save((err) => {
-    if (err) return handleError(err);
-    // saved!
-    });
+    userDataBase.set(userdata.id + "access_token", access_token);
   
-    userData.findOne({usernameData: {$eq:userdata.id}}, function (err, docs) {
-    if (err){
-        console.log(err)
-    }
-    else{
-        console.log("Result : ", docs);
-    }
-    });
   
 
 
   
     //send username back to user, to be used as a session ID
     resInherited.status(200).send({username: username});
+  
   
 
 
@@ -260,7 +253,7 @@ async function getRecommendations(artist, genre, username, resInherited){
         method: "GET",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + access_token
+            'Authorization' : 'Bearer ' + userDataBase.get(username +"access_token")
         }
 
     });
@@ -278,7 +271,7 @@ async function getRecommendations(artist, genre, username, resInherited){
         method: "GET",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + access_token
+            'Authorization' : 'Bearer ' + userDataBase.get(username +"access_token")
         }
 
     });
@@ -303,7 +296,7 @@ async function getRecommendations(artist, genre, username, resInherited){
         method: "POST",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + access_token
+            'Authorization' : 'Bearer ' + userDataBase.get(username +"access_token")
         },
         body: JSON.stringify({
             "name": "Mood Playlist",
@@ -332,7 +325,7 @@ async function getRecommendations(artist, genre, username, resInherited){
         method: "POST",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + access_token
+            'Authorization' : 'Bearer ' + userDataBase.get(username +"access_token")
         },
 
     });
@@ -361,7 +354,7 @@ async function getTopArtists(username, resInherited){
         method: "GET",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + access_token
+            'Authorization' : 'Bearer ' + userDataBase.get(username +"access_token")
         }
 
     });
