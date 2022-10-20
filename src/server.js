@@ -69,7 +69,7 @@ const userDataSchema = new Schema({
   playlistIDData : String 
 });
 
-const userData = mongoose.model("userData", SomeModelSchema);
+const userData = mongoose.model("userData", userDataSchema);
 
 
 
