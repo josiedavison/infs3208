@@ -25,8 +25,8 @@ const ADDSONGS2 = "/tracks?uris=";
 //var energy = null;
 //var mood = null;
 
-var artists = [];
-var artistsUris = [];
+//var artists = [];
+//var artistsUris = [];
 var selectedArtist = null;
 var selectedGenre = null;
 
@@ -242,9 +242,12 @@ app.post('/page2/createPlaylist', (req, res) =>{
 async function getRecommendations(artist, genre, username, resInherited){
 
 
-    var artistID = artistsUris[parseInt(artist)];
+    //var artistID = artistsUris[parseInt(artist)];
+    var artistID = userDataBase.get(username+"artistsUris")[parseInt(artist)];
 
-    selectedArtist = artists[parseInt(artist)];
+    //selectedArtist = artists[parseInt(artist)];
+  
+    selectedArtist = userDataBase.get(username+"artists")[parseInt(artist)];
 
 
     //in order to get recommended tracks, we need to provide spotify with at least one track
@@ -362,13 +365,20 @@ async function getTopArtists(username, resInherited){
     });
 
     //save artists names and uris 
+    var topartists = [];
+    vr topartistsuris = []
     var images = "";
     var artistdata = await user.json();
     for (let i = 0; i< 5; i++){
         images = images + artistdata.items[i].images[0].url + ",";
-        artists.push(artistdata.items[i].name);
-        artistsUris.push(artistdata.items[i].id);
+        topartists.push(artistdata.items[i].name);
+        topartistsUris.push(artistdata.items[i].id);
     }
+  
+    console.log("top artists are" + topartists);
+    userDataBase.set(username+"artists", artists);
+    userDataBase.set(username+"artists", artistsUris);
+
 
 
 
@@ -401,8 +411,8 @@ app.get('/page3/getInfo/:username', (req, res) => {
   //energy = null;
   //mood = null;
 
-  artists = [];
-  artistsUris = [];
+  //artists = [];
+  //artistsUris = [];
   selectedArtist = null;
   selectedGenre = null;
 
