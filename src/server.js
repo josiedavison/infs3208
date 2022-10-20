@@ -72,34 +72,6 @@ const userDataSchema = new Schema({
 });
 */
 
-const { MongoClient } = require("mongodb");
-
-
-const client = new MongoClient('mongodb://mongo:27017/mydb', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-let dbConnection;
-
-module.exports = {
-  connectToServer: function (callback) {
-    client.connect(function (err, db) {
-      if (err || !db) {
-        return callback(err);
-      }
-
-      dbConnection = db.db("sample_airbnb");
-      console.log("Successfully connected to MongoDB.");
-
-      return callback();
-    });
-  },
-
-  getDb: function () {
-    return dbConnection;
-  },
-};
 
 
 
@@ -112,6 +84,23 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.set('view engine', 'ejs');
+
+
+var MongoClient = require('mongodb').MongoClient;
+
+let database;
+
+MongoClient.connect('mongodb://mongo:27017/mydb', function(err, db) {
+  if (err) throw err;
+  console.log("Database created!");
+  database = db;
+});
+
+
+database.createCollection("customers", function(err, res) {
+    if (err) throw err;
+    console.log("Collection created!");
+});
 
 
 //logic for loading the index page
