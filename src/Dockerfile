@@ -13,7 +13,7 @@ RUN npm install
 RUN npm ci --only=production
 RUN npm i ejs
 RUN npm install node-fetch
-RUN npm i mongoose
+RUN npm i -P redis
 # Bundle app source
 COPY . .
 
