@@ -32,7 +32,7 @@ app.set('view engine', 'ejs');
 const mongoose = require('mongoose');
 
 //here is where we connect to the database
-//from https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
+// database connect was adapted from ->  MDN Contributors (07/10/2022) "Express Tutorial Part 3: Using a Database (with Mongoose)" [source code] https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
 //unfortunately, due to time constraints I did not get to fully implement the database in the code.
 //instead, user data will be saved in a map on the server. This is not an ideal solution and should be improved upon in future.
 mongoose
