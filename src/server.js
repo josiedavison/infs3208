@@ -20,7 +20,7 @@ const ADDSONGS2 = "/tracks?uris=";
 //variables that need to go in the database later
 var access_token = null;
 var refresh_token = null;
-var username = null;
+//var username = null;
 
 var energy = null;
 var mood = null;
@@ -56,6 +56,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 const Schema = mongoose.Schema;
 
+/*
 const userDataSchema = new Schema({
   username : String,
   access_token : String,
@@ -69,7 +70,7 @@ const userDataSchema = new Schema({
   reccommendations : [String], 
   playlistID : String 
 });
-
+*/
 
 
 
@@ -166,7 +167,7 @@ async function callAuthorizationApi(body, resInherited){
     });
 
     var userdata = await user.json();
-    username = userdata.id;
+    var username = userdata.id;
   
 
 
@@ -191,6 +192,7 @@ app.post('/submit', (req, res) => {
     const {moodValue} = req.body;
     const {username} = req.body;
 
+    console.log("user name is " + username);
 
     //set energy and mood
     energy = energyValue;
@@ -326,6 +328,8 @@ async function getRecommendations(artist, genre, username, resInherited){
 
 //get the top 5 artists and their images via spotify API 
 app.get('/page2/getArtists/:username', (req, res) => {
+  
+    console.log("getting top artists fro " +req.params.username);
 
     getTopArtists(req.params.username, res);
     
