@@ -168,16 +168,6 @@ async function callAuthorizationApi(body, resInherited){
     var userdata = await user.json();
     username = userdata.id;
   
-    //store
-    var newUser = new userDataSchema({username:username, access_token : access_token}); 
-    newUser.save(function(err, data) {
-        if(err) {
-            console.log(error);
-        }
-        else {
-            res.send("Data inserted");
-        }
-    });
 
 
   
