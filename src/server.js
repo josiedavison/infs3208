@@ -38,6 +38,40 @@ var playlistID = null;
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
+//import database
+const mongoose = require('mongoose');
+
+
+//from https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
+mongoose
+  .connect(
+    'mongodb://mongo:27017/mydb',
+    { useNewUrlParser: true }
+  )
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+const Schema = mongoose.Schema;
+
+/*
+const userDataSchema = new Schema({
+  username : String,
+  access_token : String,
+  refresh_token : String,
+  genre : String,
+  mood : String,
+  artists : [String],
+  artistsUris : [String],
+  selectedArtist : String, 
+  selectedGenre : String,
+  reccommendations : [String], 
+  playlistID : String 
+});
+*/
+
 
 
 const { json } = require('express');
@@ -50,28 +84,6 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 
-const redis = require('redis');
-
-/*
-const redisClient = redis.createClient({
-    host: 'redis',
-    port: 6379
-})
-*/
-
-const redisClient = redis.createClient({
-    socket: {
-        host: '0.0.0.0',
-        port: 6379
-    }
-});
-
-
-redisClient.on('error', (err) => {
-    console.log('Error occured while connecting or accessing redis server');
-});
-
-
 
 //logic for loading the index page
 app.get('/', (req, res) => {
@@ -81,16 +93,6 @@ app.get('/', (req, res) => {
 
 //logic for authenticating a user 
 app.get('/login', (req, res) => {
-  
-    if(!redisClient.get('customer_name',redis.print)) {
-      //create a new record
-      redisClient.set('customer_name','John Doe', redis.print);
-      console.log('Writing Property : customer_name');
-    } else {
-      let val = redisClient.get('customer_name',redis.print);
-      console.log(`Reading property : customer_name - ${val}`);
-    }
-
 
     var redirect_uri = "CALLBACK"
 
