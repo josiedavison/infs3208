@@ -27,11 +27,11 @@ const ADDSONGS2 = "/tracks?uris=";
 
 //var artists = [];
 //var artistsUris = [];
-var selectedArtist = null;
-var selectedGenre = null;
+//var selectedArtist = null;
+//var selectedGenre = null;
 
-var reccomendations = [];
-var playlistID = null;
+//var reccomendations = [];
+//var playlistID = null;
 
 
 //import requirements 
@@ -230,7 +230,8 @@ app.post('/page2/createPlaylist', (req, res) =>{
     const {username} = req.body;
 
     //storegenre for later use 
-    selectedGenre = genre;
+    userDataBase.set(username +"selectedGenre", genre);
+    //selectedGenre = genre;
 
     getRecommendations(artist, genre, username, res);
 
@@ -244,10 +245,13 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     //var artistID = artistsUris[parseInt(artist)];
     var artistID = userDataBase.get(username+"artistsUris")[parseInt(artist)];
+    console.log("selected artist id is " + artistID);
 
     //selectedArtist = artists[parseInt(artist)];
   
-    selectedArtist = userDataBase.get(username+"artists")[parseInt(artist)];
+    var selectedArtist = userDataBase.get(username+"artists")[parseInt(artist)];
+    userDataBase.set(username+"selectedArtist", selectedArtist);
+    console.log("the selected artist is " + selectedArtist);
 
 
     //in order to get recommended tracks, we need to provide spotify with at least one track
@@ -268,7 +272,9 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     //get recommendations from spotify 
     var energyV = userDataBase.get(username +"energy");
+    console.log("energy level is " + energyV);
     var moodV = userDataBase.get(username +"mood");
+    console.log("mood level is " + moodV);
 
     var recomendationString =`https://api.spotify.com/v1/recommendations?limit=10&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}&target_energy=${energyV}&target_valence=${moodV}`;
 
@@ -282,11 +288,13 @@ async function getRecommendations(artist, genre, username, resInherited){
     });
 
     var recommendationsData = await resRecommendations.json();
+    var recommendations = [];
 
     //save reccomendations 
     for(i = 0; i <10; i++){
-        reccomendations.push(recommendationsData.tracks[i].uri);
+        recommendations.push(recommendationsData.tracks[i].uri);
     }
+    userDataBase.set(username +"recommendations", recommendations);
 
 
 
@@ -314,12 +322,12 @@ async function getRecommendations(artist, genre, username, resInherited){
 
 
     var playlistData = await resCreatePlaylist.json();
-    playlistID = playlistData.id;
+    var playlistID = playlistData.id;
 
     //add songs to playlist
     var playlistUrl = ADDSONGS + playlistID + ADDSONGS2;
     for(i=0; i < 10; i++){
-        playlistUrl = playlistUrl + reccomendations[i];
+        playlistUrl = playlistUrl + recommendations[i];
         if( i < 9){
             playlistUrl = playlistUrl + "%2C";
         }
@@ -400,8 +408,8 @@ app.get('/page3/getInfo/:username', (req, res) => {
     res.status(200).send({
         energy : userDataBase.get(username +"energy"),
         valence : userDataBase.get(username +"mood"),
-        genre : selectedGenre,
-        artist : selectedArtist
+        genre : userDataBase.get(username +"selectedGenre"),
+        artist : userDataBase.get(username +"selectedArtist")
     });
   
   //reset information
@@ -414,11 +422,11 @@ app.get('/page3/getInfo/:username', (req, res) => {
 
   //artists = [];
   //artistsUris = [];
-  selectedArtist = null;
-  selectedGenre = null;
+  //selectedArtist = null;
+  //selectedGenre = null;
 
-  reccomendations = [];
-  playlistID = null;
+  //reccomendations = [];
+  //playlistID = null;
 
 
     
