@@ -38,6 +38,7 @@ var playlistID = null;
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
+/*
 //import database
 const mongoose = require('mongoose');
 
@@ -56,7 +57,6 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 const Schema = mongoose.Schema;
 
-/*
 const userDataSchema = new Schema({
   username : String,
   access_token : String,
@@ -71,6 +71,35 @@ const userDataSchema = new Schema({
   playlistID : String 
 });
 */
+
+const { MongoClient } = require("mongodb");
+
+
+const client = new MongoClient('mongodb://mongo:27017/mydb', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+let dbConnection;
+
+module.exports = {
+  connectToServer: function (callback) {
+    client.connect(function (err, db) {
+      if (err || !db) {
+        return callback(err);
+      }
+
+      dbConnection = db.db("sample_airbnb");
+      console.log("Successfully connected to MongoDB.");
+
+      return callback();
+    });
+  },
+
+  getDb: function () {
+    return dbConnection;
+  },
+};
 
 
 
