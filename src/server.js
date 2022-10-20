@@ -20,7 +20,7 @@ const ADDSONGS2 = "/tracks?uris=";
 //variables that need to go in the database later
 var access_token = null;
 var refresh_token = null;
-//var username = null;
+var username = null;
 
 var energy = null;
 var mood = null;
@@ -57,20 +57,18 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 const Schema = mongoose.Schema;
 
 const userDataSchema = new Schema({
-  usernameData : String,
-  access_tokenData : String,
-  refresh_tokenData : String,
-  genreData : String,
-  moodData : String,
-  artistsData : [String],
-  artistsUrisData : [String],
-  selectedArtistData : String, 
-  selectedGenreData : String,
-  reccommendationsData : [String], 
-  playlistIDData : String 
+  username : String,
+  access_token : String,
+  refresh_token : String,
+  genre : String,
+  mood : String,
+  artists : [String],
+  artistsUris : [String],
+  selectedArtist : String, 
+  selectedGenre : String,
+  reccommendations : [String], 
+  playlistID : String 
 });
-
-const userDataCollection = mongoose.model('userDataCollection', userDataSchema);
 
 
 
@@ -141,14 +139,11 @@ async function callAuthorizationApi(body, resInherited){
         body: body
 
     });
-  
-    var tempAccess_token = null;
 
     if (res.status == 200){
         var data = await res.json();
         if (data.access_token != undefined){
             access_token = data.access_token;
-            tempAccess_token = data.access_token;
         }
         if( data.refresh_token != undefined){
             refresh_token = data.refresh_token;
@@ -165,22 +160,29 @@ async function callAuthorizationApi(body, resInherited){
         method: "GET",
         headers : {
             'Content-Type' : 'application/json',
-            'Authorization' : 'Bearer ' + tempAccess_token
+            'Authorization' : 'Bearer ' + access_token
         }
 
     });
 
     var userdata = await user.json();
-    //username = userdata.id;
+    username = userdata.id;
   
     //store
-    const newUser = new userDataCollection({usernameData: userdata.id, access_tokenData: tempAccess_token});
-    console.log("new user is " + newUser +" " +newUser.UsernameData +newUser.access_tokenData);
-    
+    var newUser = new userDataSchema({username:username, access_token : access_token}); 
+    newUser.save(function(err, data) {
+        if(err) {
+            console.log(error);
+        }
+        else {
+            res.send("Data inserted");
+        }
+    });
+
 
   
     //send username back to user, to be used as a session ID
-    resInherited.status(200).send({username: userdata.id});
+    resInherited.status(200).send({username: username});
   
 
 
@@ -199,37 +201,10 @@ app.post('/submit', (req, res) => {
     const {moodValue} = req.body;
     const {username} = req.body;
 
-    var tempEnergy = energyValue
-    var tempUsername = username;
-    console.log("the username is " + tempUsername);
 
-    //CHANGE THIS - sace to mongo model
     //set energy and mood
     energy = energyValue;
     mood = moodValue;
-  
-    userDataCollection.findOneAndUpdate({usernameData: "cyberjosie"}, 
-    {energyData: tempEnergy}, null, function (err, docs) {
-    if (err){
-        console.log(err);
-    }
-    else{
-        console.log("saved energy" + docs.energyData);
-    }
-      
-    userDataCollection.findOneAndUpdate({usernameData: username }, 
-    {moodData: moodValue}, null, function (err, docs) {
-    if (err){
-        console.log(err);
-    }
-    else{
-        console.log("saved mood" + docs.MoodData);
-    }
-    })
-      
-      
-      
-    });
 
     res.status(200).send({status: "success"});
 
@@ -251,19 +226,8 @@ app.post('/page2/createPlaylist', (req, res) =>{
     const {genre} = req.body;
     const {username} = req.body;
 
-    //CHANGE THIS - store in mongo DB 
     //storegenre for later use 
     selectedGenre = genre;
-    userDataCollection.findOneAndUpdate({usernameData: username }, 
-    {selectedGenreData: genre}, null, function (err, docs) {
-    if (err){
-        console.log(err);
-    }
-    else{
-        console.log("saved genre" + docs.selectedGenreData);
-    }
-    })
-
 
     getRecommendations(artist, genre, username, res);
 
@@ -275,12 +239,10 @@ app.post('/page2/createPlaylist', (req, res) =>{
 async function getRecommendations(artist, genre, username, resInherited){
 
 
-    //CHANGE THIS - get from the database
     var artistID = artistsUris[parseInt(artist)];
-    //CHANGE THIS - get from database, and save to database
+
     selectedArtist = artists[parseInt(artist)];
 
-  //CHANGE THIS, get access token from database
 
     //in order to get recommended tracks, we need to provide spotify with at least one track
     //get the top track from the user selected artist
@@ -300,10 +262,8 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     //get recommendations from spotify 
 
-    //CHANGE THIS, get data like energy from database
     var recomendationString =`https://api.spotify.com/v1/recommendations?limit=10&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}&target_energy=${energy}&target_valence=${mood}`;
 
-    //CHANGE THIS, get access token from database
     const resRecommendations = await fetch(recomendationString, {
         method: "GET",
         headers : {
@@ -315,7 +275,6 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     var recommendationsData = await resRecommendations.json();
 
-    //CHANGE THIS, save to database
     //save reccomendations 
     for(i = 0; i <10; i++){
         reccomendations.push(recommendationsData.tracks[i].uri);
@@ -330,7 +289,6 @@ async function getRecommendations(artist, genre, username, resInherited){
     body.public = true;
 
 
-    //CHANGE THIS, get username from database and access token
     const resCreatePlaylist = await fetch(PLAYLIST + username + PLAYLIST2, {
         method: "POST",
         headers : {
@@ -347,20 +305,8 @@ async function getRecommendations(artist, genre, username, resInherited){
     });
 
 
-    //CHANGE THIS, save to database 
     var playlistData = await resCreatePlaylist.json();
     playlistID = playlistData.id;
-  
-    userDataCollection.findOneAndUpdate({username: username }, 
-    {playlistIDData: playlistData.id}, null, function (err, docs) {
-    if (err){
-        console.log(err);
-    }
-    else{
-        console.log("saved playlist id " + docs.playlisIDData);
-    }
-    })
-
 
     //add songs to playlist
     var playlistUrl = ADDSONGS + playlistID + ADDSONGS2;
@@ -372,7 +318,6 @@ async function getRecommendations(artist, genre, username, resInherited){
 
     }
 
-    //CHANGE THIS, get access token from database
     const resAddSongs = await fetch(playlistUrl, {
         method: "POST",
         headers : {
@@ -399,7 +344,6 @@ app.get('/page2/getArtists/:username', (req, res) => {
 
 async function getTopArtists(username, resInherited){
 
-    //CHANGE THIS, get access token from database
     //get 5 top artists from spotify
     const user = await fetch(ARTISTS, {
         method: "GET",
@@ -410,7 +354,6 @@ async function getTopArtists(username, resInherited){
 
     });
 
-    //CHANGE THIS, save data to database
     //save artists names and uris 
     var images = "";
     var artistdata = await user.json();
@@ -435,9 +378,6 @@ app.get('/page3', (req, res) => {
 
 //get information about user requests to present back to user
 app.get('/page3/getInfo/:username', (req, res) => {
-  
-    //get username from url 
-    //CHANGE THIS, get all data from database
     res.status(200).send({
         energy : energy,
         valence : mood,
