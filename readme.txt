@@ -26,7 +26,8 @@ ALTERNATIVELY, to use your own spotify account follow these steps instead
 - Docker compose 
 
 1. start a virtual machine
-2. call "sudo docker-compose up -d" in the infs3208 folder
+2. upload the infs3208-main folder & cd infs3208-main
+3. call "sudo docker-compose up -d" in the infs3208 folder
 3. vist http://{IP_ADDRESS_OF_VM}
 
 
@@ -51,9 +52,10 @@ curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-
 chmod +x kompose
 sudo mv ./kompose /usr/local/bin/kompose
 
-4. upload the zip file and run "cd infs3208"
+4. upload the infs3208-main folder and run "cd infs3208-main"
 5. run "kompose convert"
 6. run "kubectl apply -f mongo-claim0-persistentvolumeclaim.yaml,mongo-service.yaml,nginx-deployment.yaml,nodejs-app-deployment.yaml,example-net-networkpolicy.yaml,mongo-deployment.yaml,nginx-service.yaml,nodejs-app-service.yaml"
+7. services may be scaled etc at will
 
 
 - Other References
