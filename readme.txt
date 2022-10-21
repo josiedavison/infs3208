@@ -26,7 +26,7 @@ ALTERNATIVELY, to use your own spotify account follow these steps instead
 - Docker compose 
 
 1. start a virtual machine
-2. call "sudo docker-compose up -d" in the infs320 folder
+2. call "sudo docker-compose up -d" in the infs3208 folder
 3. vist http://{IP_ADDRESS_OF_VM}
 
 
