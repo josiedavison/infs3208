@@ -24,7 +24,7 @@ services:
         networks:
             - example-net
         labels:
-            kompose.service.type: nodeport
+            kompose.service.type: LoadBalancer
     mongo:
         image: mongo
         volumes:
