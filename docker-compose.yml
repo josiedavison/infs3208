@@ -23,6 +23,8 @@ services:
             - nodejs-app
         networks:
             - example-net
+        labels:
+            kompose.service.type: nodeport
     mongo:
         image: mongo
         volumes:
